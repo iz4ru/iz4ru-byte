@@ -1,0 +1,34 @@
+[
+  {
+    "id": "1",
+    "title": "Selamat Datang di Blog Saya",
+    "slug": "selamat-datang-di-blog-saya",
+    "excerpt": "Pengenalan tentang blog pribadi iz4ru.byte dan apa yang akan Anda temukan di sini.",
+    "content": "[{\"type\":\"heading\",\"attrs\":{\"level\":1},\"content\":[{\"type\":\"text\",\"text\":\"Selamat Datang\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Ini adalah artikel pertama di blog iz4ru.byte. Di sini saya akan berbagi tentang teknologi, pemrograman, dan pengalaman belajar saya.\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Terima kasih telah berkunjung!\"}]}]",
+    "published": true,
+    "publishedAt": "2024-04-15T10:00:00Z",
+    "createdAt": "2024-04-15T10:00:00Z",
+    "updatedAt": "2026-04-21T05:05:02.709Z",
+    "views": 56,
+    "likes": 1,
+    "likedBy": [
+      "tuyqvq"
+    ]
+  },
+  {
+    "id": "2",
+    "title": "Memulai dengan Next.js 15",
+    "slug": "memulai-dengan-nextjs-15",
+    "excerpt": "Panduan lengkap untuk memulai proyek Next.js 15 dengan fitur-fitur terbaru.",
+    "content": "[{\"type\":\"heading\",\"attrs\":{\"level\":1},\"content\":[{\"type\":\"text\",\"text\":\"Memulai dengan Next.js 15\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"Next.js 15 membawa banyak peningkatan performa dan fitur baru. Dalam artikel ini, kami akan menjelajahi beberapa fitur utama.\"}]},{\"type\":\"heading\",\"attrs\":{\"level\":2},\"content\":[{\"type\":\"text\",\"text\":\"App Router\"}]},{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"App Router adalah cara baru untuk mendefinisikan rute di Next.js dengan struktur yang lebih intuitif.\"}]}]",
+    "published": true,
+    "publishedAt": "2024-04-10T15:30:00Z",
+    "createdAt": "2024-04-10T15:30:00Z",
+    "updatedAt": "2026-04-21T05:03:38.397Z",
+    "views": 3,
+    "likes": 1,
+    "likedBy": [
+      "tuyqvq"
+    ]
+  }
+]

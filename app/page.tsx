@@ -1,0 +1,34 @@
+import type { Metadata } from 'next'
+import { Navbar } from '@/components/navbar'
+import { Footer } from '@/components/footer'
+import { PostList } from '@/components/post-list'
+
+export const metadata: Metadata = {
+  title: 'Beranda - iz4ru.byte',
+  description: 'Blog pribadi dengan artikel tentang teknologi dan pengembangan web',
+  openGraph: {
+    title: 'iz4ru.byte',
+    description: 'Blog pribadi dengan artikel tentang teknologi dan pengembangan web',
+    url: 'https://iz4ru.byte',
+    type: 'website',
+  },
+}
+
+export default function Home() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
+        <div className="mb-12">
+          <h1 className="text-5xl font-bold font-mono text-accent mb-4">iz4ru.byte</h1>
+          <p className="text-sm lg:text-base text-muted-foreground">
+            Selamat datang di blog pribadi iz4ru!
+          </p>
+        </div>
+
+        <PostList />
+      </main>
+      <Footer />
+    </div>
+  )
+}
