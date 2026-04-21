@@ -25,7 +25,10 @@ const fetcher = async (_key: string): Promise<Post[]> => {
     .order('publishedAt', { ascending: false })
 
   if (error) throw error
-  return data as Post[]
+  return (data || []).map((post) => ({
+    ...post,
+    publishedAt: post.publishedAt ? post.publishedAt + 'Z' : null,
+  })) as Post[]
 }
 
 export function PostList() {

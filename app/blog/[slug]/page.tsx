@@ -8,6 +8,7 @@ import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { TiptapEditor } from '@/components/tiptap-editor'
 import { Button } from '@/components/ui/button'
+import { Eye, Heart } from 'lucide-react'
 
 interface Post {
   id: string
@@ -39,7 +40,7 @@ export default function BlogPost() {
   })
 
   useEffect(() => {
-    let didRun = false  // tambah flag
+    let didRun = false
 
     const fetchPost = async () => {
       try {
@@ -53,7 +54,6 @@ export default function BlogPost() {
         setLikes(data.likes)
         setIsLiked(data.likedBy.includes(userId))
 
-        // Increment views — hanya kalau belum dijalankan
         if (!didRun) {
           didRun = true
           const viewedKey = `viewed_${data.id}`
@@ -77,7 +77,7 @@ export default function BlogPost() {
       fetchPost()
     }
 
-    return () => { didRun = true }  // cleanup: tandai sudah jalan saat unmount
+    return () => { didRun = true }
   }, [slug, userId])
 
   const handleLike = async () => {
@@ -149,8 +149,14 @@ export default function BlogPost() {
                   })}
               </div>
               <div className="flex gap-4">
-                <span>{post.views} tayangan</span>
-                <span>{likes} suka</span>
+                <span className="flex items-center gap-1">
+                  <Eye className="w-3.5 h-3.5" />
+                  {post.views} tayangan
+                </span>
+                <span className="flex items-center gap-1">
+                  <Heart className="w-3.5 h-3.5" />
+                  {likes} suka
+                </span>
               </div>
             </div>
           </div>
@@ -162,7 +168,7 @@ export default function BlogPost() {
           <div className="prose-dark">
             {post.content && (() => {
               const parsed = typeof post.content === 'string' ? JSON.parse(post.content) : post.content
-              const tiptapContent = Array.isArray(parsed) 
+              const tiptapContent = Array.isArray(parsed)
                 ? { type: 'doc', content: parsed }
                 : parsed
               return <TiptapEditor content={tiptapContent} editable={false} />
@@ -176,7 +182,7 @@ export default function BlogPost() {
               variant={isLiked ? 'default' : 'outline'}
               className="gap-2"
             >
-              <span>{isLiked ? '♥' : '♡'}</span>
+              <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
               Suka ({likes})
             </Button>
           </div>

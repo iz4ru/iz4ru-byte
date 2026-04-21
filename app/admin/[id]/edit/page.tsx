@@ -12,7 +12,7 @@ interface Post {
   title: string
   slug: string
   excerpt: string
-  content: string
+  content: string | object
 }
 
 export default function EditPost() {
@@ -21,7 +21,12 @@ export default function EditPost() {
   const postId = params.id as string
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string
+    slug: string
+    excerpt: string
+    content: string | object
+  }>({
     title: '',
     slug: '',
     excerpt: '',
@@ -38,7 +43,7 @@ export default function EditPost() {
           title: post.title,
           slug: post.slug,
           excerpt: post.excerpt,
-          content: post.content,
+          content: typeof post.content === 'string' ? post.content : post.content,
         })
       } catch (err) {
         console.error('Error fetching post:', err)
@@ -67,7 +72,9 @@ export default function EditPost() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          content: formData.content ? JSON.parse(formData.content) : [],
+          content: typeof formData.content === 'string'
+            ? (formData.content ? JSON.parse(formData.content) : [])
+            : formData.content,
         }),
       })
 

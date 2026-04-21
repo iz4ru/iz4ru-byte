@@ -19,10 +19,10 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-12">
-          <h1 className="text-5xl font-bold font-mono text-accent mb-4">iz4ru.byte</h1>
+        <div className="mb-12 align-middle text-center lg:text-start">
+          <h1 className="text-4xl lg:text-5xl font-bold font-mono text-accent mb-4">iz4ru.byte</h1>
           <p className="text-sm lg:text-base text-muted-foreground">
-            Selamat datang di blog pribadi iz4ru!
+            Selamat datang di blog pribadiku!
           </p>
         </div>
 

@@ -92,9 +92,11 @@ export async function getPostById(id: string): Promise<Post | null> {
 
 export async function createPost(input: CreatePostInput): Promise<Post> {
   const supabase = await createClient()
+  const now = new Date().toISOString()
   const { data, error } = await supabase
     .from('posts')
     .insert({
+      id: crypto.randomUUID(),
       title: input.title,
       slug: input.slug,
       excerpt: input.excerpt,
@@ -104,6 +106,8 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
       views: 0,
       likes: 0,
       likedBy: [],
+      createdAt: now,
+      updatedAt: now,
     })
     .select()
     .single()

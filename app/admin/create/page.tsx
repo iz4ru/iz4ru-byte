@@ -10,7 +10,12 @@ import { Textarea } from '@/components/ui/textarea'
 export default function CreatePost() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    title: string
+    slug: string
+    excerpt: string
+    content: string | object
+  }>({
     title: '',
     slug: '',
     excerpt: '',
@@ -36,7 +41,9 @@ export default function CreatePost() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          content: formData.content ? JSON.parse(formData.content) : [],
+          content: typeof formData.content === 'string'
+            ? (formData.content ? JSON.parse(formData.content) : [])
+            : formData.content,
         }),
       })
 
