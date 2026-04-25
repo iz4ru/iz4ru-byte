@@ -308,19 +308,28 @@ export default function TermsOfServicePage() {
             <h2 className="font-lora text-3xl font-bold text-foreground mb-4">
               Contact Us
             </h2>
+
             <p className="text-foreground/85 leading-relaxed mb-4">
-              If you have any questions about these Terms, You can contact us:
+              If you have any questions about this Privacy Policy, You can contact us:
             </p>
+
             <ul className="space-y-2 text-foreground/85">
               <li>
                 <strong>By email:</strong>{' '}
-                <a href="mailto:satriamaulanaridwan56@gmail.com" className="text-primary hover:underline">
+                <a
+                  href="mailto:satriamaulanaridwan56@gmail.com"
+                  className="text-primary hover:underline break-all block"
+                >
                   satriamaulanaridwan56@gmail.com
                 </a>
               </li>
+
               <li>
                 <strong>By visiting this page:</strong>{' '}
-                <Link href="/" className="text-primary hover:underline">
+                <Link
+                  href="/"
+                  className="text-primary hover:underline break-all block"
+                >
                   https://iz4ru-byte.vercel.app/
                 </Link>
               </li>
