@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale/id'
-import { Eye, Heart } from 'lucide-react'
+import { Eye, Heart, MessageCircle } from 'lucide-react'
 
 interface PostCardProps {
   id: string
@@ -13,9 +13,10 @@ interface PostCardProps {
   publishedAt: string | null
   views: number
   likes: number
+  commentCount: number
 }
 
-export function PostCard({ id, title, slug, excerpt, publishedAt, views, likes }: PostCardProps) {
+export function PostCard({ id, title, slug, excerpt, publishedAt, views, likes, commentCount }: PostCardProps) {
   return (
     <Link href={`/blog/${slug}`}>
       <article className="group border border-border rounded-lg p-6 mb-6 hover:bg-secondary/50 transition-colors cursor-pointer">
@@ -35,6 +36,10 @@ export function PostCard({ id, title, slug, excerpt, publishedAt, views, likes }
           <span className="flex items-center gap-1">
             <Heart className="w-3.5 h-3.5" />
             {likes} suka
+          </span>
+          <span className="flex items-center gap-1">
+            <MessageCircle className="w-3.5 h-3.5" />
+            {commentCount} komentar
           </span>
         </div>
       </article>

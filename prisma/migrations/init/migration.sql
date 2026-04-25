@@ -1,7 +1,7 @@
 -- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "public";
 
--- CreateTable
+-- CreateTable Posts
 CREATE TABLE "posts" (
     "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
     "title" TEXT NOT NULL,
@@ -19,11 +19,51 @@ CREATE TABLE "posts" (
     CONSTRAINT "posts_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable Comments
+CREATE TABLE "comments" (
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
+    "postId" TEXT NOT NULL,
+    "userId" UUID NOT NULL,
+    "parentId" UUID,
+    "content" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "comments_pkey" PRIMARY KEY ("id")
+);
+
+-- create view comments_with_user
+CREATE VIEW comments_with_user AS
+SELECT
+  c.id,
+  c."postId",
+  c."userId",
+  c."parentId",
+  c.content,
+  c."createdAt",
+  u.raw_user_meta_data->>'full_name' as "userName",
+  u.raw_user_meta_data->>'avatar_url' as "userAvatar",
+  u.email as "userEmail"
+FROM comments c
+JOIN auth.users u ON c."userId" = u.id;
+
 -- CreateIndex
 CREATE UNIQUE INDEX "posts_slug_key" ON "posts"("slug");
+CREATE INDEX "comments_postId_idx" ON "comments"("postId");
+CREATE INDEX "comments_parentId_idx" ON "comments"("parentId");
+
+-- Foreign Keys
+ALTER TABLE "comments" ADD CONSTRAINT "comments_postId_fkey"
+    FOREIGN KEY ("postId") REFERENCES "posts"("id") ON DELETE CASCADE;
+
+ALTER TABLE "comments" ADD CONSTRAINT "comments_parentId_fkey"
+    FOREIGN KEY ("parentId") REFERENCES "comments"("id") ON DELETE CASCADE;
+
+ALTER TABLE "comments" ADD CONSTRAINT "comments_userId_fkey"
+    FOREIGN KEY ("userId") REFERENCES auth.users("id") ON DELETE CASCADE;
 
 -- Enable RLS
 ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 
 -- CreateRole
 GRANT USAGE ON SCHEMA public TO anon;
@@ -32,11 +72,11 @@ GRANT USAGE ON SCHEMA public TO service_role;
 
 GRANT SELECT ON public.posts TO anon;
 GRANT ALL ON public.posts TO authenticated;
+GRANT SELECT ON public.comments TO anon;
+GRANT ALL ON public.comments TO authenticated;
+GRANT SELECT ON comments_with_user TO anon;
+GRANT SELECT ON comments_with_user TO authenticated;
 GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
-
--- Drop policy lama yang terlalu terbuka
-DROP POLICY IF EXISTS "anon_select" ON public.posts;
-DROP POLICY IF EXISTS "authenticated_select" ON public.posts;
 
 -- anon hanya bisa baca yang sudah published
 CREATE POLICY "anon_select_published" ON public.posts
@@ -66,3 +106,16 @@ USING (true) WITH CHECK (true);
 CREATE POLICY "authenticated_delete" ON public.posts
 FOR DELETE TO authenticated
 USING (true);
+
+-- authenticated bisa baca semua comments
+CREATE POLICY "anon_read_comments" ON public.comments
+FOR SELECT TO anon
+USING (true);
+
+CREATE POLICY "authenticated_insert_comment" ON public.comments
+FOR INSERT TO authenticated
+WITH CHECK (auth.uid() = "userId");
+
+CREATE POLICY "authenticated_delete_own_comment" ON public.comments
+FOR DELETE TO authenticated
+USING (auth.uid() = "userId");

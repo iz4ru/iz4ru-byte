@@ -13,22 +13,20 @@ interface Post {
   publishedAt: string | null
   views: number
   likes: number
+  commentCount: number
 }
 
 const fetcher = async (_key: string): Promise<Post[]> => {
-  console.log('Fetching posts...')
   const res = await fetch('/api/posts')
-  console.log('Response status:', res.status)
   if (!res.ok) {
     const err = await res.json()
-    console.error('Error response:', err)
     throw new Error(err.error || 'Failed to fetch posts')
   }
   const posts = await res.json()
-  console.log('Posts fetched:', posts.length)
   return posts.map((post: Post) => ({
     ...post,
     publishedAt: post.publishedAt ? post.publishedAt + 'Z' : null,
+    commentCount: post.commentCount || 0,
   }))
 }
 

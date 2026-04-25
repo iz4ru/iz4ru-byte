@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import useSWR from 'swr'
 import { Button } from '@/components/ui/button'
-import { Eye, Heart, Pencil, Trash2, Globe, FileText, ChevronUp, ChevronDown, ChevronsUpDown, Search } from 'lucide-react'
+import { Eye, Heart, Pencil, Trash2, Globe, FileText, ChevronUp, ChevronDown, ChevronsUpDown, Search, MessageCircle } from 'lucide-react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -26,6 +26,7 @@ interface Post {
   publishedAt: string | null
   views: number
   likes: number
+  commentCount: number
 }
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
@@ -102,6 +103,15 @@ export default function AdminDashboard() {
       cell: (info) => (
         <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <Heart className="w-3.5 h-3.5" />
+          {info.getValue()}
+        </span>
+      ),
+    }),
+    columnHelper.accessor('commentCount', {
+      header: 'Komentar',
+      cell: (info) => (
+        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <MessageCircle className="w-3.5 h-3.5" />
           {info.getValue()}
         </span>
       ),
@@ -283,6 +293,7 @@ export default function AdminDashboard() {
                   <div className="flex gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5" />{post.views}</span>
                     <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5" />{post.likes}</span>
+                    <span className="flex items-center gap-1"><MessageCircle className="w-3.5 h-3.5" />{post.commentCount}</span>
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     <Link href={`/admin/${post.id}/edit`}>

@@ -9,7 +9,8 @@ import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { TiptapEditor } from '@/components/tiptap-editor'
 import { Button } from '@/components/ui/button'
-import { Eye, Heart } from 'lucide-react'
+import { Eye, Heart, MessageCircle } from 'lucide-react'
+import { CommentSection } from '@/components/comment-section'
 
 interface Post {
   id: string
@@ -21,6 +22,7 @@ interface Post {
   views: number
   likes: number
   likedBy: string[]
+  commentCount?: number
 }
 
 export default function BlogPost() {
@@ -30,6 +32,7 @@ export default function BlogPost() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [likes, setLikes] = useState<number>(0)
+  const [commentCount, setCommentCount] = useState<number>(0)
   const [isLiked, setIsLiked] = useState(false)
   const [authUserId, setAuthUserId] = useState<string | null>(null)
 
@@ -49,10 +52,12 @@ export default function BlogPost() {
         const data = await response.json()
         setPost({
           ...data,
+          publishedAt: data.publishedAt ? data.publishedAt + 'Z' : null,
           content: typeof data.content === 'string' ? JSON.parse(data.content) : data.content
         })
         setLikes(data.likes)
         setIsLiked(authUserId ? data.likedBy.includes(authUserId) : false)
+        setCommentCount(data.commentCount || 0)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load post')
       } finally {
@@ -164,10 +169,15 @@ export default function BlogPost() {
                     <Heart className="w-4 h-4" />
                     {likes} suka
                   </span>
+                  <span className="flex items-center gap-1.5">
+                    <MessageCircle className="w-4 h-4" />
+                    {commentCount} komentar
+                  </span>
                 </div>
               </div>
               <div className="border-t border-border/60" />
             </header>
+
             <div>
               {post.content && (() => {
                 const parsed = typeof post.content === 'string' ? JSON.parse(post.content) : post.content
@@ -177,6 +187,7 @@ export default function BlogPost() {
                 return <TiptapEditor content={tiptapContent} editable={false} />
               })()}
             </div>
+
             <div className="border-t border-border/60 pt-8 flex gap-4">
               <Button
                 onClick={handleLike}
@@ -195,6 +206,10 @@ export default function BlogPost() {
                 </p>
               )}
             </div>
+
+            {/* Comments */}
+            <CommentSection postId={post.id} />
+
           </article>
         </div>
       </main>

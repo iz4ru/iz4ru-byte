@@ -24,6 +24,7 @@ export interface Post {
   views: number
   likes: number
   likedBy: string[]
+  commentCount?: number 
 }
 
 export interface CreatePostInput {
@@ -57,39 +58,89 @@ function mapPost(row: Record<string, unknown>): Post {
 
 export async function getAllPosts(): Promise<Post[]> {
   const supabase = await createClient()
-  const { data, error } = await supabase
+
+  const { data: posts, error: postsError } = await supabase
     .from('posts')
     .select('*')
     .eq('isPublished', true)
     .order('publishedAt', { ascending: false })
 
-  if (error) throw error
-  return (data || []).map(mapPost)
+  if (postsError) throw postsError
+  if (!posts || posts.length === 0) return []
+
+  const postIds = posts.map(p => p.id)
+  console.log('📝 [DEBUG] Post IDs:', postIds)
+
+  const { data: comments, error: commentsError } = await supabaseAdmin
+    .from('comments')
+    .select('postId, id') 
+    .in('postId', postIds)
+
+  const commentCounts: Record<string, number> = {}
+  postIds.forEach(id => { commentCounts[id] = 0 })
+
+  comments?.forEach(comment => {
+    if (comment.postId) {
+      commentCounts[comment.postId] = (commentCounts[comment.postId] || 0) + 1
+    }
+  })
+  return posts.map(post => ({
+    ...mapPost(post),
+    commentCount: commentCounts[post.id] || 0,
+  }))
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
   const supabase = await createClient()
-  const { data, error } = await supabase
+
+  const { data: post, error } = await supabase
     .from('posts')
     .select('*')
     .eq('slug', slug)
     .eq('isPublished', true)
     .single()
 
-  if (error) return null
-  return mapPost(data)
+  if (error || !post) return null
+
+  const { data: comments, error: commentsError } = await supabaseAdmin
+    .from('comments')
+    .select('postId')
+    .eq('postId', post.id)
+
+  if (commentsError) console.error('Error fetching comments for detail:', commentsError)
+
+  const commentCount = comments?.length || 0
+
+  return {
+    ...mapPost(post),
+    commentCount: commentCount,
+  }
 }
 
 export async function getPostById(id: string): Promise<Post | null> {
   const supabase = await createClient()
-  const { data, error } = await supabase
+
+  const { data: post, error } = await supabase
     .from('posts')
     .select('*')
     .eq('id', id)
     .single()
 
-  if (error) return null
-  return mapPost(data)
+  if (error || !post) return null
+
+  const { data: comments, error: commentsError } = await supabaseAdmin
+    .from('comments')
+    .select('postId')
+    .eq('postId', post.id)
+
+  if (commentsError) console.error('Error fetching comments for post ID:', commentsError)
+
+  const commentCount = comments?.length || 0
+
+  return {
+    ...mapPost(post),
+    commentCount: commentCount,
+  }
 }
 
 export async function createPost(input: CreatePostInput): Promise<Post> {
@@ -202,12 +253,36 @@ export async function toggleLike(postId: string, userId: string): Promise<Post |
 }
 
 export async function getAllPostsAdmin(): Promise<Post[]> {
-  const supabase = await getAdminClient()
-  const { data, error } = await supabase
+  const supabase = await getAdminClient() 
+
+  const { data: posts, error: postsError } = await supabase
     .from('posts')
     .select('*')
     .order('createdAt', { ascending: false })
 
-  if (error) throw error
-  return (data || []).map(mapPost)
+  if (postsError) throw postsError
+  if (!posts || posts.length === 0) return []
+
+  const postIds = posts.map(p => p.id)
+
+  const { data: comments, error: commentsError } = await supabaseAdmin
+    .from('comments')
+    .select('postId')
+    .in('postId', postIds)
+
+  if (commentsError) console.error('Error fetching comments for admin:', commentsError)
+
+  const commentCounts: Record<string, number> = {}
+  postIds.forEach(id => { commentCounts[id] = 0 })
+
+  comments?.forEach(comment => {
+    if (comment.postId) {
+      commentCounts[comment.postId] = (commentCounts[comment.postId] || 0) + 1
+    }
+  })
+
+  return posts.map(post => ({
+    ...mapPost(post),
+    commentCount: commentCounts[post.id] || 0,
+  }))
 }
