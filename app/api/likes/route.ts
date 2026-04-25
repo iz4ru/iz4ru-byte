@@ -1,25 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { toggleLike } from '@/lib/blog-data'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { postId, userId } = body
+    const supabase = await createClient()
 
-    if (!postId || !userId) {
-      return NextResponse.json({ error: 'Missing postId or userId' }, { status: 400 })
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const post = await toggleLike(postId, userId)
+    const body = await request.json()
+    const { postId } = body
+
+    if (!postId) {
+      return NextResponse.json({ error: 'Missing postId' }, { status: 400 })
+    }
+
+    const post = await toggleLike(postId, user.id)
 
     if (!post) {
       return NextResponse.json({ error: 'Post not found' }, { status: 404 })
     }
 
-    const isLiked = post.likedBy.includes(userId)
-    return NextResponse.json({ likes: post.likes, isLiked })
+    const isLiked = post.likedBy.includes(user.id)
+
+    return NextResponse.json({
+      likes: post.likes,
+      isLiked,
+    })
   } catch (error) {
-    console.error('Error toggling like:', error)
     return NextResponse.json({ error: 'Failed to toggle like' }, { status: 500 })
   }
 }

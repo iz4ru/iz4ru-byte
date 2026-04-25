@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useCallback } from 'react'
 import useSWR from 'swr'
 import { PostCard } from './post-card'
-import { createClient } from '@/lib/supabase/client'
+import { SearchBar } from './search-bar'
 
 interface Post {
   id: string
@@ -15,24 +15,39 @@ interface Post {
   likes: number
 }
 
-const supabase = createClient()
-
 const fetcher = async (_key: string): Promise<Post[]> => {
-  const { data, error } = await supabase
-    .from('posts')
-    .select('id, title, slug, excerpt, publishedAt, views, likes')
-    .eq('isPublished', true)
-    .order('publishedAt', { ascending: false })
-
-  if (error) throw error
-  return (data || []).map((post) => ({
+  console.log('Fetching posts...')
+  const res = await fetch('/api/posts')
+  console.log('Response status:', res.status)
+  if (!res.ok) {
+    const err = await res.json()
+    console.error('Error response:', err)
+    throw new Error(err.error || 'Failed to fetch posts')
+  }
+  const posts = await res.json()
+  console.log('Posts fetched:', posts.length)
+  return posts.map((post: Post) => ({
     ...post,
     publishedAt: post.publishedAt ? post.publishedAt + 'Z' : null,
-  })) as Post[]
+  }))
 }
 
 export function PostList() {
+  const [query, setQuery] = useState('')
   const { data: posts, isLoading, error } = useSWR<Post[], Error>('posts', fetcher)
+
+  const handleSearch = useCallback((q: string) => {
+    setQuery(q)
+  }, [])
+
+  const filtered = posts?.filter(post => {
+    if (!query.trim()) return true
+    const q = query.toLowerCase()
+    return (
+      post.title.toLowerCase().includes(q) ||
+      post.excerpt.toLowerCase().includes(q)
+    )
+  })
 
   if (isLoading) {
     return (
@@ -69,9 +84,19 @@ export function PostList() {
 
   return (
     <div className="space-y-6">
-      {posts.map((post) => (
-        <PostCard key={post.id} {...post} />
-      ))}
+      <SearchBar onSearch={handleSearch} />
+
+      {filtered?.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">
+            {query ? `Tidak ada artikel untuk "${query}"` : 'Belum ada artikel yang dipublikasikan'}
+          </p>
+        </div>
+      ) : (
+        filtered?.map((post) => (
+          <PostCard key={post.id} {...post} />
+        ))
+      )}
     </div>
   )
 }

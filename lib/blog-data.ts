@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/client-helper'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 
 interface PostContent {
   type: string
@@ -91,7 +93,7 @@ export async function getPostById(id: string): Promise<Post | null> {
 }
 
 export async function createPost(input: CreatePostInput): Promise<Post> {
-  const supabase = await createClient()
+  const supabase = await getAdminClient()
   const now = new Date().toISOString()
   const { data, error } = await supabase
     .from('posts')
@@ -117,7 +119,7 @@ export async function createPost(input: CreatePostInput): Promise<Post> {
 }
 
 export async function updatePost(id: string, input: UpdatePostInput): Promise<Post | null> {
-  const supabase = await createClient()
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('posts')
     .update({
@@ -138,7 +140,7 @@ export async function updatePost(id: string, input: UpdatePostInput): Promise<Po
 }
 
 export async function deletePost(id: string): Promise<boolean> {
-  const supabase = await createClient()
+  const supabase = await getAdminClient()
   const { error } = await supabase
     .from('posts')
     .delete()
@@ -148,9 +150,7 @@ export async function deletePost(id: string): Promise<boolean> {
 }
 
 export async function incrementViews(postId: string): Promise<Post | null> {
-  const supabase = await createClient()
-
-  const { data: current, error: fetchError } = await supabase
+  const { data: current, error: fetchError } = await supabaseAdmin
     .from('posts')
     .select('views')
     .eq('id', postId)
@@ -158,7 +158,7 @@ export async function incrementViews(postId: string): Promise<Post | null> {
 
   if (fetchError || !current) return null
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('posts')
     .update({ views: current.views + 1, updatedAt: new Date().toISOString() })
     .eq('id', postId)
@@ -182,7 +182,6 @@ export async function toggleLike(postId: string, userId: string): Promise<Post |
 
   const likedBy: string[] = current.likedBy || []
   const alreadyLiked = likedBy.includes(userId)
-
   const newLikedBy = alreadyLiked
     ? likedBy.filter((id) => id !== userId)
     : [...likedBy, userId]
@@ -203,7 +202,7 @@ export async function toggleLike(postId: string, userId: string): Promise<Post |
 }
 
 export async function getAllPostsAdmin(): Promise<Post[]> {
-  const supabase = await createClient()
+  const supabase = await getAdminClient()
   const { data, error } = await supabase
     .from('posts')
     .select('*')

@@ -151,7 +151,24 @@ export function TiptapEditor({ content, onChange, editable = true }: TiptapEdito
   if (!editor) return null
 
   if (!editable) {
-    return <EditorContent editor={editor} className="prose-dark" />
+    return (
+      <EditorContent
+        editor={editor}
+        className="
+          prose prose-neutral dark:prose-invert max-w-none
+          prose-p:leading-7 prose-p:text-foreground/80 prose-p:text-base
+          prose-headings:font-lora prose-headings:text-foreground prose-headings:font-bold
+          prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+          prose-h2:mt-10 prose-h3:mt-8
+          prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+          prose-blockquote:border-l-2 prose-blockquote:border-border prose-blockquote:text-muted-foreground prose-blockquote:not-italic
+          prose-code:text-sm prose-code:bg-secondary prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:font-mono
+          prose-pre:bg-secondary prose-pre:rounded-xl prose-pre:text-sm
+          prose-img:rounded-xl prose-img:shadow-md
+          prose-li:leading-7 prose-hr:border-border/40
+        "
+      />
+    )
   }
 
   return (

@@ -26,7 +26,7 @@ export function PostCard({ id, title, slug, excerpt, publishedAt, views, likes }
           {publishedAt &&
             formatDistanceToNow(new Date(publishedAt), { addSuffix: true, locale: idLocale })}
         </p>
-        <p className="text-foreground/80 line-clamp-3 mb-4">{excerpt}</p>
+        <p className="text-foreground/80 text-sm lg:text-base line-clamp-3 mb-4">{excerpt}</p>
         <div className="flex gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <Eye className="w-3.5 h-3.5" />

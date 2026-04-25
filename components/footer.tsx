@@ -4,7 +4,7 @@ export function Footer() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2024 iz4ru.byte. Semua hak cipta terlindungi.
+            © {new Date().getFullYear()} iz4ru.byte. Semua hak cipta terlindungi.
           </p>
           <div className="flex gap-6 text-sm">
             <a

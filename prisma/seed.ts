@@ -12,7 +12,7 @@ async function main() {
 
   const postsData = [
     {
-      id: "1",
+      id: crypto.randomUUID(),
       title: "Selamat Datang di Blog Saya",
       slug: "selamat-datang-di-blog-saya",
       excerpt: "Pengenalan tentang blog pribadi iz4ru.byte...",
@@ -23,7 +23,7 @@ async function main() {
       likes: 0,
     },
     {
-      id: "2",
+      id: crypto.randomUUID(),
       title: "Memulai dengan Next.js 15",
       slug: "memulai-dengan-nextjs-15",
       excerpt: "Panduan lengkap untuk memulai proyek Next.js 15...",

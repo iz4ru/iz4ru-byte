@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { PostList } from '@/components/post-list'
+import { Typewriter } from '@/components/typewriter'
 
 export const metadata: Metadata = {
   title: 'Beranda - iz4ru.byte',
@@ -20,7 +21,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-12 align-middle text-center lg:text-start">
-          <h1 className="text-4xl lg:text-5xl font-bold font-mono text-accent mb-4">iz4ru.byte</h1>
+          <Typewriter />
           <p className="text-sm lg:text-base text-muted-foreground">
             Selamat datang di blog pribadiku!
           </p>
